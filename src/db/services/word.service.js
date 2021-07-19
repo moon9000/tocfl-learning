@@ -26,11 +26,11 @@ class WordDataService {
   }
 
   findByLevel(level) {
-    return http.get(`/words?level=${level}`);
+    return http.get(`/words/level/${level}`);
   }
 
   findByType(type) {
-    return http.get(`/words?type=${type}`);
+    return http.get(`/words/type/${type}`);
   }
 }
 
