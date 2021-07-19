@@ -13,6 +13,12 @@ module.exports = (app) => {
   // Retrieve a single word with id
   router.get("/:id", words.findOne);
 
+  // Retrieve words related to specific level
+  router.get("/level/:level", words.findByLevel);
+
+  // Retrieve words related to specific type
+  router.get("/type/:type", words.findByType);
+
   // Update a word with id
   router.put("/:id", words.update);
 
