@@ -23,19 +23,41 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  Word.findByPk(id)
+  Word.findAll({ where: { id: id } })
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Error retrieving Tutorial with id=" + id,
+        message: err.message || "Some error occurred while retrieving Words.",
       });
     });
 };
 
 // Update a Word by the id in the request
-exports.update = (req, res) => {};
+exports.update = (req, res) => {
+  const id = req.params.id;
+  const data = req.params.data;
+
+  console.log(req);
+  Word.update(req.body, { returning: true, where: { id: id } })
+    .then((num) => {
+      if (num == 1) {
+        res.send({
+          message: "Word was updated successfully.",
+        });
+      } else {
+        res.send({
+          message: `Cannot update Word with id=${id}. Maybe Word was not found or req.body is empty!`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: "Error updating Word with id=" + id,
+      });
+    });
+};
 
 // Delete a Word with the specified id in the request
 exports.delete = (req, res) => {};
