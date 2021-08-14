@@ -67,3 +67,31 @@ exports.deleteAll = (req, res) => {};
 
 // Find all published Words
 exports.findAllPublished = (req, res) => {};
+
+// Find words from a specific level
+exports.findByLevel = (req, res) => {
+  const level = req.params.level;
+  Word.findAll({ where: { level: level } })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving Words.",
+      });
+    });
+};
+
+// Find words from a specific type
+exports.findByType = (req, res) => {
+  const type = req.params.type;
+  Word.findAll({ where: { type: type } })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving Words.",
+      });
+    });
+};
