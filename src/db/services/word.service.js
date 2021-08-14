@@ -5,6 +5,10 @@ class WordDataService {
     return http.get("/words");
   }
 
+  findAll() {
+    return http.get("/words");
+  }
+
   get(id) {
     return http.get(`/words/${id}`);
   }
@@ -23,6 +27,10 @@ class WordDataService {
 
   deleteAll() {
     return http.delete(`/words`);
+  }
+
+  findOne(id) {
+    return http.get(`/words/${id}`);
   }
 
   findByLevel(level) {
