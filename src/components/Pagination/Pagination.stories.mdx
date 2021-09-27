@@ -1,0 +1,56 @@
+import { Meta, Story, Preview, Props } from "@storybook/addon-docs/blocks"
+import { useState } from "react"
+import { Pagination } from "./Pagination"
+
+<Meta title="Pagination" component={Pagination} />
+
+# Pagination
+
+<Props of={Pagination} />
+
+<Preview>
+  <Story name="current first">
+    <Pagination
+      currentPageNumber={1}
+      itemNumberPerPage={20}
+      totalItemCount={200}
+      pageParameterName="page"
+      pageRange={2}
+    />
+  </Story>
+</Preview>
+
+<Preview>
+  <Story name="current middle">
+    <Pagination
+      currentPageNumber={5}
+      itemNumberPerPage={20}
+      totalItemCount={200}
+      pageParameterName="page"
+      pageRange={2}
+    />
+  </Story>
+</Preview>
+
+<Preview>
+  <Story name="current last">
+    <Pagination
+      currentPageNumber={10}
+      itemNumberPerPage={20}
+      totalItemCount={200}
+      pageParameterName="page"
+      pageRange={2}
+    />
+  </Story>
+</Preview>
+
+<Preview>
+  <Story name="no page range">
+    <Pagination
+      currentPageNumber={10}
+      itemNumberPerPage={20}
+      totalItemCount={200}
+      pageParameterName="page"
+    />
+  </Story>
+</Preview>
