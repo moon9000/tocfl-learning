@@ -7,14 +7,13 @@ exports.create = (req, res) => {};
 
 // Retrieve all Words from the database.
 exports.findAll = (req, res) => {
-  Word.findAll()
+  Word.findAll() //add {limit : 20} as a parameter to limit display
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
+        message: err.message || "Some error occurred while retrieving Words.",
       });
     });
 };
