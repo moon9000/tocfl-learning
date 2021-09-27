@@ -19,5 +19,5 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.words = require("./word.model.js")(sequelize, Sequelize);
-
+db.animes = require("./anime.model.js")(sequelize, Sequelize);
 module.exports = db;
