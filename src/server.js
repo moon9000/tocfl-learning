@@ -53,5 +53,8 @@ app.post("/ln", (req, res) => {
 
 require("./db/routes/anime.route")(app); //to use routes related to db models and controllers
 require("./db/routes/word.route")(app); //to use routes related to db models and controllers
+require("./db/routes/auth.route")(app);
+require("./db/routes/user.route")(app);
+require("./db/routes/song.route")(app);
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
