@@ -4,7 +4,6 @@ const Sequelize = require("sequelize");
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
   dialect: dbConfig.dialect,
-
   pool: {
     max: dbConfig.pool.max,
     min: dbConfig.pool.min,
@@ -20,4 +19,21 @@ db.sequelize = sequelize;
 
 db.words = require("./word.model.js")(sequelize, Sequelize);
 db.animes = require("./anime.model.js")(sequelize, Sequelize);
+db.user = require("./user.model.js")(sequelize, Sequelize);
+db.role = require("./role.model.js")(sequelize, Sequelize);
+db.songs = require("./song.model.js")(sequelize, Sequelize);
+
+db.role.belongsToMany(db.user, {
+  through: "user_roles",
+  foreignKey: "roleId",
+  otherKey: "userId",
+});
+db.user.belongsToMany(db.role, {
+  through: "user_roles",
+  foreignKey: "userId",
+  otherKey: "roleId",
+});
+
+db.ROLES = ["user", "admin"];
+
 module.exports = db;

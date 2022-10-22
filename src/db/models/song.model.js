@@ -1,31 +1,31 @@
 module.exports = (sequelize, Sequelize) => {
-  const Word = sequelize.define(
-    "Words2",
+  const Song = sequelize.define(
+    "Song",
     {
-      chinese: {
+      chTitle: {
         type: Sequelize.STRING,
       },
-      pinyin: {
+      enTitle: {
         type: Sequelize.STRING,
       },
-      english: {
+      artist: {
         type: Sequelize.STRING,
       },
-      type: {
+      year: {
         type: Sequelize.STRING,
       },
-      level: {
+      description: {
         type: Sequelize.STRING,
       },
-      sentence_ch: {
+      chLyrics: {
         type: Sequelize.STRING,
       },
-      sentence_eng: {
+      enLyrics: {
         type: Sequelize.STRING,
       },
     },
-    { timestamps: false, freezeTableName: true }
+    { timestamps: false }
   );
 
-  return Word;
+  return Song;
 };
