@@ -3,9 +3,12 @@ import { Nav, Navbar, NavDropdown, Form, FormControl } from "react-bootstrap";
 import WordDataService from "../../db/services/word.service";
 import { Link } from "react-router-dom";
 import { ButtonBase } from "../Button";
+import getCurrentUser from "../../hooks/getCurrentUser";
+import logout from "../../hooks/logout";
 
 export function NavBar({ setter }) {
   const [value, setValue] = React.useState("");
+  const currentUser = getCurrentUser();
 
   function handleSubmit(setter) {
     if (!setter) {
@@ -45,13 +48,38 @@ export function NavBar({ setter }) {
               <div className="flex flex-col space-y-2">
                 <Link to="/words">TOCFL List</Link>
                 <Link to="/ln">Light novel parser</Link>
+                <Link to="/taiwan-residency-infos">Taiwan Residency Infos</Link>
                 <Link to="/news">News from Taiwanese newspaper</Link>
                 <Link to="/comments">Comments from PTT</Link>
+                <Link to="/animes">Animes</Link>
+                <Link to="/songs">Songs</Link>
               </div>
             </NavDropdown>
-            <Nav.Link className="text-white" href="/login">
-              Login
-            </Nav.Link>
+            {!currentUser ? (
+              <Nav.Link className="text-white" href="/register">
+                Register
+              </Nav.Link>
+            ) : null}
+            {!currentUser ? (
+              <Nav.Link className="text-white" href="/login">
+                Login
+              </Nav.Link>
+            ) : null}
+            {currentUser ? (
+              <Nav.Link className="text-white" href="/profile">
+                My Profile
+              </Nav.Link>
+            ) : null}
+            {currentUser ? (
+              <Nav.Link className="text-white" href="/lists">
+                My Lists
+              </Nav.Link>
+            ) : null}
+            {currentUser ? (
+              <Nav.Link className="text-white" href="/home" onClick={logout}>
+                Logout
+              </Nav.Link>
+            ) : null}
           </Nav>
           {setter ? (
             <button
