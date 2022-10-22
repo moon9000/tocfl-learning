@@ -1,34 +1,28 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
-import { useHistory } from "react-router-dom";
 import axios from "axios";
 
-export function LoginPage() {
+export function RegisterPage() {
   const [username, setUsername] = useState();
+  const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [message, setMessage] = useState();
-  const history = useHistory();
 
   async function onFormSubmit(e) {
     e.preventDefault();
-    const user = { username: username, password: password };
+    const user = { username: username, email: email, password: password };
     console.log(user);
 
     try {
       const response = await axios
-        .post("/login", user)
+        .post("/register", user)
         .then(function (response) {
           console.log("la reponse est :");
           console.log(response);
-
-          localStorage.setItem("user", JSON.stringify(response.data));
-          setMessage("You successfull logged in. Redirecting you..");
-          setTimeout(() => {
-            history.push("/");
-            window.location.reload();
-          }, 2000);
+          setMessage(response.data.message);
           setUsername("");
+          setEmail("");
           setPassword("");
         })
         .catch(function (error) {
@@ -44,41 +38,56 @@ export function LoginPage() {
     //if formData.append('epub'), it would allow server.js to get req.files.epub
   }
 
+  console.log(message);
+
   function handleUsernameChange(e) {
     e.preventDefault();
     setUsername(e.target.value);
+  }
+
+  function handleEmailChange(e) {
+    e.preventDefault();
+    setEmail(e.target.value);
   }
 
   function handlePasswordChange(e) {
     e.preventDefault();
     setPassword(e.target.value);
   }
-  console.log(username);
-  console.log(password);
 
   return (
     <Router>
       <div>
-        <h1>Login </h1>
-        <form onSubmit={onFormSubmit}>
+        <h1>Register</h1>
+        <form method="POST" onSubmit={onFormSubmit}>
           <div className="border border-black flex items-center text-center flex-col space-y-4">
             <input
               type="text"
               className="border"
+              name="username"
               placeholder="Enter your username"
               value={username}
               onChange={(e) => handleUsernameChange(e)}
             />
             <input
+              type="email"
+              className="border"
+              name="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => handleEmailChange(e)}
+            />
+            <input
               type="password"
               className="border"
+              name="password"
               placeholder="Enter your password"
               value={password}
               onChange={(e) => handlePasswordChange(e)}
             />
             <input
               type="submit"
-              value="Login"
+              value="Register"
               className="btn btn-primary btn-block mt-4"
             />
           </div>

@@ -8,17 +8,38 @@ import { TableCell } from "../../components/TableCell";
 import { TableHeader } from "../../components/TableHeader";
 import { TableRow } from "../../components/TableRow";
 import { Select } from "../../components/Select";
-import { Pagination } from "../../components/Pagination";
+import { ButtonBase } from "../../components/Button";
+//import { Pagination } from "../../components/Pagination";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
+import cx from "classnames";
 
 export function ListPage() {
   const [words, setWords] = useState([]);
+  const [nbPages, setNbPages] = useState();
+  const params = new URLSearchParams(window.location.search);
+  const currentPage = parseInt(params.get("page")) || 1;
+  const [totalItemCount, setTotalItemCount] = useState();
+  const [nextPage, setNextPage] = React.useState();
+
+  console.log(words);
+
+  console.log(currentPage);
+  const handleChange = (event, value) => {
+    console.log(value);
+    setNextPage(value);
+  };
 
   const [levelChoice, setLevelChoice] = React.useState("A1");
   const [typeChoice, setTypeChoice] = React.useState("noun");
   const [inputSentenceCh, setInputSentenceCh] = React.useState("");
   const [inputSentenceEn, setInputSentenceEn] = React.useState("");
+  const [disabled, setDisabled] = React.useState("");
   const [value, setValue] = React.useState("");
+  const [nbWords, setNbWords] = React.useState(0);
+  console.log(levelChoice);
 
+  /*
   const retrieveWords = () => {
     WordDataService.findByLevel(levelChoice)
       .then((response) => {
@@ -28,21 +49,36 @@ export function ListPage() {
         console.log(e);
       });
   };
+  */
 
   const retrieveAllWords = () => {
-    WordDataService.findAll()
+    const params = new URLSearchParams(window.location.search);
+    const page = parseInt(params.get("page")) || 1;
+    let value = { page: page };
+
+    WordDataService.getAll(value)
       .then((response) => {
-        setWords(response.data);
+        console.log(response);
+        setWords(response.data.words);
+        setNbPages(response.data.totalPages);
+        setNbWords(response.data.totalItems);
       })
       .catch((e) => {
         console.log(e);
       });
   };
 
+  console.log(words);
+
   const retrieveWordsByLevel = (level) => {
-    WordDataService.findByLevel(level)
+    const params = new URLSearchParams(window.location.search);
+    const pageProp = parseInt(params.get("page")) || 1;
+    let value = { page: pageProp };
+
+    WordDataService.findByLevel(level, value)
       .then((response) => {
-        setWords(response.data);
+        console.log(response);
+        setWords(response.data.words);
       })
       .catch((e) => {
         console.log(e);
@@ -58,7 +94,8 @@ export function ListPage() {
   }
 
   useEffect(() => {
-    retrieveWordsByLevel("A1");
+    // retrieveWordsByLevel(levelChoice);
+    retrieveAllWords();
   }, []);
 
   const optionsLevel = [
@@ -80,17 +117,15 @@ export function ListPage() {
 
   function handleChangeLevel(e) {
     setLevelChoice(e.target.value); //make "A2" the new levelChoice
-    {
-      e.target.value === "All"
-        ? WordDataService.findAll()
-            .then((response) => {
-              setWords(response.data);
-            })
-            .catch((e) => {
-              console.log(e);
-            })
-        : retrieveWordsByLevel(e.target.value);
-    }
+    e.target.value === "All"
+      ? WordDataService.findAll()
+          .then((response) => {
+            setWords(response.data);
+          })
+          .catch((e) => {
+            console.log(e);
+          })
+      : retrieveWordsByLevel(e.target.value);
     //search only "A2" words and make the words array only containing those words
     //setTypeChoice("All"); //reset type choice because by default, when changing level, everything must be displayed
   }
@@ -155,8 +190,9 @@ export function ListPage() {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    WordDataService.findAll() //retrive all words for a specific type
+    WordDataService.getAll() //retrive all words for a specific type
       .then((response) => {
+        console.log(response);
         let filteredWords = response.data.filter(
           (word) => word.chinese.includes(value) //search words that matches both the levelChoice and the typeChoice
         );
@@ -172,13 +208,19 @@ export function ListPage() {
       <div className="List">
         <h1>Here is the current TOCFL Vocabulary List :</h1>
         <p>
-          There is {words.length} {typeChoice === "All" ? "words" : typeChoice}{" "}
-          for {levelChoice === "All" ? "all levels" : `level ${levelChoice}`}
+          There is {words ? words.length : "a certain number "}{" "}
+          {typeChoice === "All" ? "words" : typeChoice} for{" "}
+          {levelChoice === "All" ? "all levels" : `level ${levelChoice}`}
         </p>
         <p>
-          {nbSentences.length} of those {words.length} words have sentences (
-          {((100 * nbSentences.length) / words.length).toFixed(2)} %)
+          {nbSentences ? nbSentences.length : "A certain number"} of those{" "}
+          {words ? words.length : null} words have sentences
+          {nbSentences && words
+            ? ((100 * nbSentences.length) / words.length).toFixed(2)
+            : null}{" "}
+          %
         </p>
+        <p>There is {nbWords} words in total</p>
         <div className="flex flex-row">
           <div>
             <Select
@@ -200,7 +242,14 @@ export function ListPage() {
                 type="text"
                 className="border border-black"
               />
-              <button className="bg-white border border-black" type="submit">
+              <button
+                disabled={value === ""}
+                className={cx(
+                  { "bg-grey": value === "", "bg-white": value !== "" },
+                  "border border-black"
+                )}
+                type="submit"
+              >
                 Send
               </button>
             </form>
@@ -208,33 +257,52 @@ export function ListPage() {
         </div>
         <Table className="w-full">
           <TableHeader>
-            <TableRow className="border border-1 border-black cursor-pointer">
-              <TableCell color="dark">Id</TableCell>
-              <TableCell color="dark">Chinese</TableCell>
-              <TableCell color="dark">Pinyin</TableCell>
-              <TableCell color="dark">English</TableCell>
-              <TableCell color="dark">Type</TableCell>
-              <TableCell color="dark">Level</TableCell>
-              <TableCell color="dark">Sentence (chinese)</TableCell>
-              <TableCell color="dark">Sentence (english)</TableCell>
+            <TableRow className="bg-black border border-1 border-white cursor-pointer">
+              <TableCell color="light">Id</TableCell>
+              <TableCell color="light">Chinese</TableCell>
+              <TableCell color="light">Pinyin</TableCell>
+              <TableCell color="light">English</TableCell>
+              <TableCell color="light">Type</TableCell>
+              <TableCell color="light">Level</TableCell>
+              <TableCell color="light">Sentence (chinese)</TableCell>
+              <TableCell color="light">Sentence (english)</TableCell>
             </TableRow>
           </TableHeader>
           {words?.map((word, index) => {
+            //mettre dans une autre couleur bien visible la partie de sentence_ch et sentence_en qui contiennent pinyin et english
+            /*
+            const before = word.sentence_ch.substring(
+              0,
+              word.sentence_ch.indexOf(word.pinyin)
+            );
+            const sentence_substring = word.sentence_ch.indexOf(word.pinyin);
+            */
+            //const test = word.sentence_ch.split(word.pinyin);
+            //console.log(test);
+            // const after = word.sentence_ch.split(word.pinying)[1];
+            //console.log(before);
+            //  console.log(after);
+
+            //const highlightRegExp = new RegExp(word.chinese, "gi");
+            //const delineator = " ";
+            //const parts = word.sentence_ch.split(delineator);
+
+            //const indexes = getStartEnd(word.sentence_ch, word.chinese);
+            //console.log(indexes);
+
             return (
               <TableBody key={word.id}>
-                <TableRow
-                  className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
-                >
-                  <TableCell color="dark">{word.id}</TableCell>
-                  <TableCell variant="h1" color="dark">
+                <TableRow className={index % 2 === 0 ? "bg-black" : "bg-black"}>
+                  <TableCell color="light">{word.id}</TableCell>
+                  <TableCell variant="h1" color="light">
                     {word.chinese}
                   </TableCell>
 
-                  <TableCell color="dark">{word.pinyin}</TableCell>
-                  <TableCell color="dark">{word.english}</TableCell>
-                  <TableCell color="dark">{word.type} </TableCell>
-                  <TableCell color="dark">{word.level} </TableCell>
-                  <TableCell color="dark">
+                  <TableCell color="light">{word.pinyin}</TableCell>
+                  <TableCell color="light">{word.english}</TableCell>
+                  <TableCell color="light">{word.type} </TableCell>
+                  <TableCell color="light">{word.level} </TableCell>
+                  <TableCell color="light">
                     {word.sentence_ch === "" ? (
                       <form
                         id={`id${word.id}`}
@@ -245,17 +313,25 @@ export function ListPage() {
                       >
                         <input
                           type="text"
+                          className="text-black"
                           id={`id${word.id}-id`}
                           onChange={(e) => setInputSentenceCh(e.target.value)}
                           placeholder="Add a sentence"
                         />
-                        <input type="submit" value="Submit" />
+                        <input
+                          className="text-black"
+                          type="submit"
+                          value="Submit"
+                        />
                       </form>
                     ) : (
-                      word.sentence_ch
+                      <HighlightPattern
+                        text={word.sentence_ch}
+                        pattern={word.chinese}
+                      />
                     )}
                   </TableCell>
-                  <TableCell color="dark">
+                  <TableCell color="light">
                     {word.sentence_eng === "" ? (
                       <form
                         id={`id${word.id}En`}
@@ -267,10 +343,15 @@ export function ListPage() {
                         <input
                           type="text"
                           id={`id${word.id}En-id`}
+                          className="text-black"
                           onChange={(e) => setInputSentenceEn(e.target.value)}
                           placeholder="Add a sentence"
                         />
-                        <input type="submit" value="Submit" />
+                        <input
+                          className="text-black"
+                          type="submit"
+                          value="Submit"
+                        />
                       </form>
                     ) : (
                       word.sentence_eng
@@ -281,14 +362,78 @@ export function ListPage() {
             );
           })}
         </Table>
-        <Pagination
-          currentPageNumber={1}
-          itemNumberPerPage={20}
-          totalItemCount={200}
+        {/*<PaginationControlled nbPages={nbPages} currentPage={currentPage} />
+         <Pagination
+          currentPageNumber={currentPage}
+          itemNumberPerPage={100}
+          totalItemCount={totalItemCount}
           pageParameterName="page"
-          pageRange={2}
-        />
+          pageRange={20}
+          
+        />*/}
+        <ButtonBase variant="primary" href={mkHref("page", nextPage)}>
+          <Pagination
+            count={nbPages}
+            page={currentPage}
+            siblingCount={0}
+            defaultPage={0}
+            shape="rounded"
+            onChange={handleChange}
+          />
+        </ButtonBase>
       </div>
     </Router>
   );
 }
+
+/*
+export default function PaginationControlled({ nbPages, currentPage }) {
+  const [page, setPage] = React.useState();
+  const handleChange = (event, value) => {
+    console.log(value);
+    setPage(value);
+  };
+
+  return (
+    <ButtonBase variant="primary" href={mkHref("page", page)}>
+      <Pagination
+        count={nbPages}
+        page={page}
+        shape="rounded"
+        onChange={handleChange}
+      />
+    </ButtonBase>
+  );
+}
+*/
+
+function mkHref(pageParameterName, pageNumber) {
+  const params = new URLSearchParams(window.location.search);
+  params.set(pageParameterName, pageNumber);
+  return "?" + params;
+}
+
+const HighlightPattern = ({ text, pattern }) => {
+  const splitText = text.split(pattern);
+
+  if (splitText.length <= 1) {
+    return text;
+  }
+
+  const matches = text.match(pattern);
+
+  return splitText.reduce(
+    (arr, element, index) =>
+      matches[index]
+        ? [...arr, element, <mark>{matches[index]}</mark>]
+        : [...arr, element],
+    []
+  );
+};
+
+/*
+const getStartEnd = (str, sub) => [
+  str.indexOf(sub),
+  str.indexOf(sub) + sub.length - 1,
+];
+*/
