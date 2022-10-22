@@ -3,6 +3,7 @@ module.exports = (app) => {
 
   console.log(words.findAll);
   var router = require("express").Router();
+  console.log(router);
 
   // Create a new word
   router.post("/", words.create);
