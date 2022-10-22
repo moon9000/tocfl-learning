@@ -1,8 +1,8 @@
 import http from "../../http_common";
 
 class WordDataService {
-  getAll() {
-    return http.get("/words");
+  getAll(params) {
+    return http.get("/words", { params });
   }
 
   findAll() {
@@ -33,8 +33,8 @@ class WordDataService {
     return http.get(`/words/${id}`);
   }
 
-  findByLevel(level) {
-    return http.get(`/words/level/${level}`);
+  findByLevel(level, params) {
+    return http.get(`/words/level/${level}`, { params });
   }
 
   findByType(type) {
