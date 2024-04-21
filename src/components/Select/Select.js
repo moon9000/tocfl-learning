@@ -1,5 +1,4 @@
 import * as React from "react";
-import cx from "classnames";
 import PropTypes from "prop-types";
 
 export function Select(props) {

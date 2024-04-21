@@ -24,8 +24,12 @@ export function ListPage() {
 
   console.log(words);
 
+  const wordsWithSentences = words?.filter((word) => word.sentence_ch);
+
   console.log(currentPage);
   const handleChange = (event, value) => {
+    //event.preventDefault();
+    event.stopPropagation();
     console.log(value);
     setNextPage(value);
   };
@@ -70,15 +74,24 @@ export function ListPage() {
 
   console.log(words);
 
+  //main logic is : changing words state with a filtered words version when choosing a specific level
+  //it should directly display number of pages for this specific level
+
   const retrieveWordsByLevel = (level) => {
     const params = new URLSearchParams(window.location.search);
     const pageProp = parseInt(params.get("page")) || 1;
     let value = { page: pageProp };
 
+    console.log(params);
+    console.log(pageProp);
+    console.log(value);
+
     WordDataService.findByLevel(level, value)
       .then((response) => {
         console.log(response);
         setWords(response.data.words);
+        setNbPages(response.data.totalPages);
+        setNbWords(response.data.totalItems);
       })
       .catch((e) => {
         console.log(e);
@@ -94,8 +107,10 @@ export function ListPage() {
   }
 
   useEffect(() => {
-    // retrieveWordsByLevel(levelChoice);
-    retrieveAllWords();
+    //retrieveWordsByLevel(levelChoice);
+    if (words.length === 0) {
+      retrieveAllWords();
+    }
   }, []);
 
   const optionsLevel = [
@@ -203,6 +218,10 @@ export function ListPage() {
       });
   };
 
+  const currentLevelNbWords = words.filter(
+    (word) => word.level === levelChoice
+  );
+
   return (
     <Router>
       <div className="List">
@@ -220,7 +239,10 @@ export function ListPage() {
             : null}{" "}
           %
         </p>
-        <p>There is {nbWords} words in total</p>
+        <p>
+          There is {nbWords} words in total{" "}
+          {levelChoice && `for the level ${levelChoice}`}
+        </p>
         <div className="flex flex-row">
           <div>
             <Select
@@ -269,27 +291,6 @@ export function ListPage() {
             </TableRow>
           </TableHeader>
           {words?.map((word, index) => {
-            //mettre dans une autre couleur bien visible la partie de sentence_ch et sentence_en qui contiennent pinyin et english
-            /*
-            const before = word.sentence_ch.substring(
-              0,
-              word.sentence_ch.indexOf(word.pinyin)
-            );
-            const sentence_substring = word.sentence_ch.indexOf(word.pinyin);
-            */
-            //const test = word.sentence_ch.split(word.pinyin);
-            //console.log(test);
-            // const after = word.sentence_ch.split(word.pinying)[1];
-            //console.log(before);
-            //  console.log(after);
-
-            //const highlightRegExp = new RegExp(word.chinese, "gi");
-            //const delineator = " ";
-            //const parts = word.sentence_ch.split(delineator);
-
-            //const indexes = getStartEnd(word.sentence_ch, word.chinese);
-            //console.log(indexes);
-
             return (
               <TableBody key={word.id}>
                 <TableRow className={index % 2 === 0 ? "bg-black" : "bg-black"}>
@@ -430,10 +431,3 @@ const HighlightPattern = ({ text, pattern }) => {
     []
   );
 };
-
-/*
-const getStartEnd = (str, sub) => [
-  str.indexOf(sub),
-  str.indexOf(sub) + sub.length - 1,
-];
-*/
