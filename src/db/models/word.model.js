@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
   const Word = sequelize.define(
-    "Words2",
+    "tocf-learning",
     {
       chinese: {
         type: Sequelize.STRING,
@@ -9,9 +9,6 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
       },
       english: {
-        type: Sequelize.STRING,
-      },
-      type: {
         type: Sequelize.STRING,
       },
       level: {
