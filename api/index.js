@@ -1,13 +1,12 @@
 const path = require("path");
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
-const express = require("express");
+var express = require("express");
 var cors = require("cors");
 //const upload = require("express-fileupload");
 //const jwt = require("jsonwebtoken");
 //const bodyParser = require("body-parser");
 //const { JsonWebTokenError } = require("jsonwebtoken");
-
-
+const findAllWords = require('../src/controllers/word.js')
 const app = express();
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
@@ -22,9 +21,9 @@ const options = [
 
 app.use(options);
 
-const db = require("../src/db/models");
+//const db = require("../src/db/models");
 
-db.sequelize.sync();
+//db.sequelize.sync();
 
 // // drop the table if it already exists
 // db.sequelize.sync({ force: true }).then(() => {
@@ -69,10 +68,17 @@ app.post("/ln", (req, res) => {
 */
 
 //require("../src/db/routes/anime.route")(app); //to use routes related to db models and controllers
-require("../src/db/routes/word.route")(app); //to use routes related to db models and controllers
+//require("../src/db/routes/word.route")(app); //to use routes related to db models and controllers
 //require("../src/db/routes/auth.route")(app);
 //require("../src/db/routes/user.route")(app);
 //require("../src/db/routes/song.route")(app);
 
+app.get('/api/words', async (req, res) => {
+  const data = await findAllWords(req, res);
+  res.send(data);
+})
+
 //app.listen(port, () => console.log(`Listening on port ${port}`));
+
+
 module.exports = app;

@@ -9,9 +9,7 @@ import { TableHeader } from "../../components/TableHeader";
 import { TableRow } from "../../components/TableRow";
 import { Select } from "../../components/Select";
 import { ButtonBase } from "../../components/Button";
-//import { Pagination } from "../../components/Pagination";
 import Pagination from "@mui/material/Pagination";
-import Stack from "@mui/material/Stack";
 import cx from "classnames";
 
 export function ListPage() {
@@ -21,8 +19,6 @@ export function ListPage() {
   const currentPage = parseInt(params.get("page")) || 1;
   const [totalItemCount, setTotalItemCount] = useState();
   const [nextPage, setNextPage] = React.useState();
-
-  console.log(words);
 
   const wordsWithSentences = words?.filter((word) => word.sentence_ch);
 
@@ -77,6 +73,7 @@ export function ListPage() {
   //main logic is : changing words state with a filtered words version when choosing a specific level
   //it should directly display number of pages for this specific level
 
+  /*
   const retrieveWordsByLevel = (level) => {
     const params = new URLSearchParams(window.location.search);
     const pageProp = parseInt(params.get("page")) || 1;
@@ -105,13 +102,37 @@ export function ListPage() {
         console.log(e);
       });
   }
-
+   */
   useEffect(() => {
     //retrieveWordsByLevel(levelChoice);
-    if (words.length === 0) {
-      retrieveAllWords();
-    }
+    (async () => {
+      if (words.length === 0) {
+        const params = new URLSearchParams(window.location.search);
+        const page = parseInt(params.get("page")) || 1;
+        let value = { page: page };
+        //retrieveAllWords();
+        const proxyUrl = `/api/words?page=${page}`;
+        const response = await fetch(proxyUrl);
+        const words = await response.json()
+        const { totalItems, totalPages } = getPagingData(words, page, 100)
+
+        setWords(words);
+        setNbPages(totalPages);
+        setNbWords(totalItems);
+      }
+    })();
   }, []);
+
+  console.log('nbPages  is :', nbPages);
+
+  console.log('nbWords  is :', nbWords);
+
+  const getPagingData = (data, page, limit) => {
+    const totalItems = data.length;
+    const currentPage = page ? +page : 0;
+    const totalPages = Math.ceil(totalItems / limit);
+    return { totalItems, totalPages, currentPage };
+  };
 
   const optionsLevel = [
     { value: "All" },
@@ -131,6 +152,7 @@ export function ListPage() {
   ];
 
   function handleChangeLevel(e) {
+    /*
     setLevelChoice(e.target.value); //make "A2" the new levelChoice
     e.target.value === "All"
       ? WordDataService.findAll()
@@ -141,6 +163,7 @@ export function ListPage() {
             console.log(e);
           })
       : retrieveWordsByLevel(e.target.value);
+      */
     //search only "A2" words and make the words array only containing those words
     //setTypeChoice("All"); //reset type choice because by default, when changing level, everything must be displayed
   }
@@ -290,7 +313,7 @@ export function ListPage() {
               <TableCell color="light">Sentence (english)</TableCell>
             </TableRow>
           </TableHeader>
-          {words?.map((word, index) => {
+          {words?.slice(0,100).map((word, index) => {
             return (
               <TableBody key={word.id}>
                 <TableRow className={index % 2 === 0 ? "bg-black" : "bg-black"}>
@@ -415,6 +438,9 @@ function mkHref(pageParameterName, pageNumber) {
 }
 
 const HighlightPattern = ({ text, pattern }) => {
+  if(!text || !pattern){
+    return null
+  }
   const splitText = text.split(pattern);
 
   if (splitText.length <= 1) {
