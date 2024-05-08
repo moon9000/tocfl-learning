@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Animes {
+  id            Int     @id @default(autoincrement())
+  englishTitle  String? @db.VarChar(255)
+  japaneseTitle String? @db.VarChar(255)
+  startDate     String? @db.VarChar(255)
+  endDate       String? @db.VarChar(255)
+  year          String? @db.VarChar(255)
+  subtype       String? @db.VarChar(255)
+  status        String? @db.VarChar(255)
+  posterImage   String? @db.VarChar(255)
+  episodeCount  String? @db.VarChar(255)
+  episodeLength String? @db.VarChar(255)
+  totalLength   String? @db.VarChar(255)
+}
+
+model Songs {
+  id          Int     @id @default(autoincrement())
+  chTitle     String? @db.VarChar(255)
+  enTitle     String? @db.VarChar(255)
+  artist      String? @db.VarChar(255)
+  year        String? @db.VarChar(255)
+  description String? @db.VarChar(255)
+  chLyrics    String? @db.VarChar(255)
+  enLyrics    String? @db.VarChar(255)
+}
+
+model postgres {
+  id           Int     @id @default(autoincrement())
+  chinese      String? @db.VarChar(255)
+  pinyin       String? @db.VarChar(255)
+  english      String? @db.VarChar(255)
+  type         String? @db.VarChar(255)
+  level        String? @db.VarChar(255)
+  sentence_ch  String? @db.VarChar(255)
+  sentence_eng String? @db.VarChar(255)
+}
+
+model roles {
+  id         Int          @id
+  name       String?      @db.VarChar(255)
+  createdAt  DateTime     @db.Timestamptz(6)
+  updatedAt  DateTime     @db.Timestamptz(6)
+  user_roles user_roles[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model tocf_learning {
+  id           BigInt  @id
+  chinese      String?
+  pinyin       String?
+  english      String?
+  sentence_ch  String?
+  sentence_eng String?
+  level        String?
+
+  @@map("tocf-learning")
+}
+
+model tocfl_learning {
+  id           Int     @id @default(autoincrement())
+  chinese      String? @db.VarChar(255)
+  pinyin       String? @db.VarChar(255)
+  english      String? @db.VarChar(255)
+  type         String? @db.VarChar(255)
+  level        String? @db.VarChar(255)
+  sentence_ch  String? @db.VarChar(255)
+  sentence_eng String? @db.VarChar(255)
+
+  @@map("tocfl-learning")
+}
+
+model user_roles {
+  createdAt DateTime @db.Timestamptz(6)
+  updatedAt DateTime @db.Timestamptz(6)
+  roleId    Int
+  userId    Int
+  roles     roles    @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, userId])
+}
+
+model users {
+  id         Int          @id @default(autoincrement())
+  username   String?      @db.VarChar(255)
+  email      String?      @db.VarChar(255)
+  password   String?      @db.VarChar(255)
+  createdAt  DateTime     @db.Timestamptz(6)
+  updatedAt  DateTime     @db.Timestamptz(6)
+  user_roles user_roles[]
+}
