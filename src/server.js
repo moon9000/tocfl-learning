@@ -1,7 +1,7 @@
 require('dotenv').config()
 const express = require("express");
 var cors = require("cors");
-const upload = require("express-fileupload");
+//const upload = require("express-fileupload");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const { JsonWebTokenError } = require("jsonwebtoken");
@@ -33,8 +33,9 @@ app.use(
   express.urlencoded({ extended: true })
 ); /* bodyParser.urlencoded() is deprecated */
 
-app.use(upload());
+//app.use(upload());
 
+/*
 app.post("/ln", (req, res) => {
   if (req.files === null) {
     return res.status(400).json({ msg: "No file uploaded" });
@@ -51,6 +52,7 @@ app.post("/ln", (req, res) => {
     res.json({ fileName: file.name, filePath: `data/${file.name}` });
   });
 });
+*/
 
 require("./db/routes/anime.route")(app); //to use routes related to db models and controllers
 require("./db/routes/word.route")(app); //to use routes related to db models and controllers
