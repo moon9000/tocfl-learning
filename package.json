@@ -37,10 +37,12 @@
   },
   "scripts": {
     "start": "craco start",
+    "prisma:generate": "prisma generate",
     "build": "prisma generate && craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "eslintConfig": {
     "extends": [
