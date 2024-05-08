@@ -114,14 +114,17 @@ export function ListPage() {
         const proxyUrl = `/api/words?page=${page}`;
         const response = await fetch(proxyUrl);
         const words = await response.json()
-        const { totalItems, totalPages } = getPagingData(words, page, 100)
+        console.log('words is :', words);
+        if(words?.length){
+          const { totalItems, totalPages } = getPagingData(words, page, 100)
 
-        setWords(words);
-        setNbPages(totalPages);
-        setNbWords(totalItems);
+          setWords(words);
+          setNbPages(totalPages);
+          setNbWords(totalItems);
+        }
       }
     })();
-  }, []);
+  }, [words]);
 
   console.log('nbPages  is :', nbPages);
 

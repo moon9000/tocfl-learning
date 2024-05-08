@@ -74,6 +74,7 @@ app.post("/ln", (req, res) => {
 //require("../src/db/routes/song.route")(app);
 
 app.get('/api/words', async (req, res) => {
+  console.log('in app get api words');
   const data = await findAllWords(req, res);
   res.send(data);
 })
