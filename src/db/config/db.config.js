@@ -1,8 +1,8 @@
 module.exports = {
-  HOST: process.env.REACT_APP_DB_HOST,
-  USER: process.env.REACT_APP_DB_USER,
-  PASSWORD: process.env.REACT_APP_DB_PASSWORD,
-  DB: process.env.REACT_APP_DB_NAME,
+  HOST: process.env.NODE_ENV_DB_HOST,
+  USER: process.env.NODE_ENV_DB_USER,
+  PASSWORD: process.env.NODE_ENV_DB_PASSWORD,
+  DB: process.env.NODE_ENV_DB_NAME,
   dialect: "postgres",
   pool: {
     max: 10, //maximum number of connection in pool
