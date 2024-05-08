@@ -1,14 +1,29 @@
-require('dotenv').config()
+const path = require("path");
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
 const express = require("express");
 var cors = require("cors");
 //const upload = require("express-fileupload");
-const jwt = require("jsonwebtoken");
-const bodyParser = require("body-parser");
-const { JsonWebTokenError } = require("jsonwebtoken");
+//const jwt = require("jsonwebtoken");
+//const bodyParser = require("body-parser");
+//const { JsonWebTokenError } = require("jsonwebtoken");
+
 
 const app = express();
+app.use(express.static(path.resolve(__dirname, '../client/build')));
 
-const db = require("./db/models");
+const options = [
+  cors({
+    origin: '*',
+    methods: '*',
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  })
+];
+
+app.use(options);
+
+const db = require("../src/db/models");
+
 db.sequelize.sync();
 
 // // drop the table if it already exists
@@ -16,14 +31,13 @@ db.sequelize.sync();
 //   console.log("Drop and re-sync db.");
 // });
 
-const port = process.env.PORT || 5000;
+//const port = process.env.PORT || 5000;
 
 /*
 var corsOptions = {
   origin: "http://localhost:5000",
 };
 */
-app.use(cors());
 
 // parse requests of content-type - application/json
 app.use(express.json()); /* bodyParser.json() is deprecated */
@@ -54,10 +68,11 @@ app.post("/ln", (req, res) => {
 });
 */
 
-require("./db/routes/anime.route")(app); //to use routes related to db models and controllers
-require("./db/routes/word.route")(app); //to use routes related to db models and controllers
-require("./db/routes/auth.route")(app);
-require("./db/routes/user.route")(app);
-require("./db/routes/song.route")(app);
+//require("../src/db/routes/anime.route")(app); //to use routes related to db models and controllers
+require("../src/db/routes/word.route")(app); //to use routes related to db models and controllers
+//require("../src/db/routes/auth.route")(app);
+//require("../src/db/routes/user.route")(app);
+//require("../src/db/routes/song.route")(app);
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
+//app.listen(port, () => console.log(`Listening on port ${port}`));
+module.exports = app;

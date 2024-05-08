@@ -1,7 +1,5 @@
 module.exports = (app) => {
   const words = require("../controllers/word.controller.js");
-
-  console.log(words.findAll);
   var router = require("express").Router();
   console.log(router);
 
