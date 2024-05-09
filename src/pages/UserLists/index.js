@@ -1,1 +1,1 @@
-export * from "./UserListsPage";
+export { default } from "./UserListsPage";

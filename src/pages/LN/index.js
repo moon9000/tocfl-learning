@@ -1,1 +1,1 @@
-export * from "./LnPage";
+export { default } from "./LnPage";
