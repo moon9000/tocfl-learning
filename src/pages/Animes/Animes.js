@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import AnimeDataService from "../../db/services/anime.service";
 import { BrowserRouter as Router } from "react-router-dom";
 import { Table } from "../../components/Table";
 import { TableBody } from "../../components/TableBody";
@@ -13,6 +12,7 @@ export function Animes() {
   const [value, setValue] = React.useState("");
 
   const retrieveAnimesByYear = (level) => {
+    /*
     AnimeDataService.findByYear(level)
       .then((response) => {
         console.log(response);
@@ -21,6 +21,7 @@ export function Animes() {
       .catch((e) => {
         console.log(e);
       });
+     */
   };
 
   useEffect(() => {
@@ -29,6 +30,7 @@ export function Animes() {
 
   const handleSearch = async (e) => {
     e.preventDefault();
+    /*
     AnimeDataService.findAll() //retrive all animes for a specific type
       .then((response) => {
         let filteredanimes = response.data.filter(
@@ -40,6 +42,7 @@ export function Animes() {
       .catch((e) => {
         console.log(e);
       });
+     */
   };
 
   return (

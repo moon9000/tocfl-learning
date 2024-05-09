@@ -1,30 +1,10 @@
 import * as React from "react";
 import { Nav, Navbar, NavDropdown, Form, FormControl } from "react-bootstrap";
-import WordDataService from "../../db/services/word.service";
 import { Link } from "react-router-dom";
 import { ButtonBase } from "../Button";
-import getCurrentUser from "../../hooks/getCurrentUser";
-import logout from "../../hooks/logout";
 
 export function NavBar({ setter }) {
   const [value, setValue] = React.useState("");
-  const currentUser = getCurrentUser();
-
-  function handleSubmit(setter) {
-    if (!setter) {
-      return null;
-    }
-    WordDataService.findAll() //retrive all words for a specific type
-      .then((response) => {
-        let filteredWords = response.data.filter(
-          (word) => word.chinese.includes(value) //search words that matches both the levelChoice and the typeChoice
-        );
-        setter(filteredWords);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }
 
   return (
     <div>
@@ -55,36 +35,10 @@ export function NavBar({ setter }) {
                 <Link to="/songs">Songs</Link>
               </div>
             </NavDropdown>
-            {!currentUser ? (
-              <Nav.Link className="text-white" href="/register">
-                Register
-              </Nav.Link>
-            ) : null}
-            {!currentUser ? (
-              <Nav.Link className="text-white" href="/login">
-                Login
-              </Nav.Link>
-            ) : null}
-            {currentUser ? (
-              <Nav.Link className="text-white" href="/profile">
-                My Profile
-              </Nav.Link>
-            ) : null}
-            {currentUser ? (
-              <Nav.Link className="text-white" href="/lists">
-                My Lists
-              </Nav.Link>
-            ) : null}
-            {currentUser ? (
-              <Nav.Link className="text-white" href="/home" onClick={logout}>
-                Logout
-              </Nav.Link>
-            ) : null}
           </Nav>
           {setter ? (
             <button
               className="bg-white border border-black"
-              onClick={handleSubmit(setter)}
             >
               Search
             </button>

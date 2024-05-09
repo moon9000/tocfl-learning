@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import WordDataService from "../../db/services/word.service";
-import Word from "../../db/models/word.model";
 import { BrowserRouter as Router } from "react-router-dom";
 import { Table } from "../../components/Table";
 import { TableBody } from "../../components/TableBody";
@@ -50,23 +48,6 @@ export function ListPage() {
       });
   };
   */
-
-  const retrieveAllWords = () => {
-    const params = new URLSearchParams(window.location.search);
-    const page = parseInt(params.get("page")) || 1;
-    let value = { page: page };
-
-    WordDataService.getAll(value)
-      .then((response) => {
-        console.log(response);
-        setWords(response.data.words);
-        setNbPages(response.data.totalPages);
-        setNbWords(response.data.totalItems);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
 
   console.log(words);
 
@@ -171,78 +152,9 @@ export function ListPage() {
     //setTypeChoice("All"); //reset type choice because by default, when changing level, everything must be displayed
   }
 
-  function handleChangeType(e) {
-    setTypeChoice(e.target.value); //make "verb" the new typeChoice
-
-    e.target.value === "All" && levelChoice !== "All"
-      ? WordDataService.findByLevel(levelChoice)
-          .then((response) => {
-            let filteredWords = response.data.filter(
-              (word) => word.level === levelChoice //search words that matches both the levelChoice and the typeChoice
-            );
-            setWords(filteredWords);
-          })
-          .catch((e) => {
-            console.log(e);
-          })
-      : e.target.value !== "All" && levelChoice === "All"
-      ? WordDataService.findAll() //retrive all words for a specific type
-          .then((response) => {
-            let filteredWords = response.data.filter(
-              (word) => word.type === e.target.value //search words that matches both the levelChoice and the typeChoice
-            );
-            setWords(filteredWords);
-          })
-          .catch((e) => {
-            console.log(e);
-          })
-      : WordDataService.findAll()
-          .then((response) => {
-            setWords(response.data);
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-  }
-
-  function handleSubmitCh(word, e) {
-    e.preventDefault();
-    WordDataService.update(word.id, { sentence_ch: inputSentenceCh })
-      .then((response) => {})
-      .catch((e) => {
-        console.log(e);
-      });
-  }
-
-  //when changing level, the default option for the type select must be reset to "All"
-
-  function handleSubmitEn(word, e) {
-    e.preventDefault();
-    WordDataService.update(word.id, { sentence_eng: inputSentenceEn })
-      .then((response) => {})
-      .catch((e) => {
-        console.log(e);
-      });
-  }
-
   const nbSentences = words?.filter(
     (word) => word.sentence_ch !== "" && word.sentence_en !== ""
   );
-
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    WordDataService.getAll() //retrive all words for a specific type
-      .then((response) => {
-        console.log(response);
-        let filteredWords = response.data.filter(
-          (word) => word.chinese.includes(value) //search words that matches both the levelChoice and the typeChoice
-        );
-        setWords(filteredWords);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
 
   const currentLevelNbWords = words.filter(
     (word) => word.level === levelChoice
@@ -278,12 +190,12 @@ export function ListPage() {
             />
             <Select
               name="type"
-              handleChange={handleChangeType}
+              handleChange={(e) => console.log('')}
               options={optionsType}
             />
           </div>
           <div className="flex flex-row space-x-4">
-            <form type="submit" onSubmit={handleSearch}>
+            <form type="submit" onSubmit={(e) => console.log('')}>
               <input
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
@@ -336,7 +248,7 @@ export function ListPage() {
                         name={word.pinyin}
                         className="flex flex-row space-x-2"
                         method="post"
-                        onSubmit={(e) => handleSubmitCh(word, e)}
+                        onSubmit={(e) => console.log('')}
                       >
                         <input
                           type="text"
@@ -365,7 +277,7 @@ export function ListPage() {
                         name="englishForm"
                         className="flex flex-row space-x-2"
                         method="post"
-                        onSubmit={(e) => handleSubmitEn(word, e)}
+                        onSubmit={(e) => console.log('')}
                       >
                         <input
                           type="text"

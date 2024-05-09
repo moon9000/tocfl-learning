@@ -74,5 +74,6 @@
   },
   "browser": {
     "crypto": false
-  }
+  },
+  "homepage": "."
 }
