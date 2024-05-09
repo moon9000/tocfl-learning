@@ -2,6 +2,7 @@ import * as React from "react";
 import { Nav, Navbar, NavDropdown, Form, FormControl } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { ButtonBase } from "../Button";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 export function NavBar({ setter }) {
   const [value, setValue] = React.useState("");
@@ -27,12 +28,6 @@ export function NavBar({ setter }) {
             >
               <div className="flex flex-col space-y-2">
                 <Link to="/words">TOCFL List</Link>
-                <Link to="/ln">Light novel parser</Link>
-                <Link to="/taiwan-residency-infos">Taiwan Residency Infos</Link>
-                <Link to="/news">News from Taiwanese newspaper</Link>
-                <Link to="/comments">Comments from PTT</Link>
-                <Link to="/animes">Animes</Link>
-                <Link to="/songs">Songs</Link>
               </div>
             </NavDropdown>
           </Nav>

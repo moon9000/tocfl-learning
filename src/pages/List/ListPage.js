@@ -12,6 +12,8 @@ import cx from "classnames";
 
 export function ListPage() {
   const [words, setWords] = useState([]);
+  const [initialWords, setInitialWords] = useState([]);
+  const [filteredWords, setFilteredWords] = useState([]);
   const [nbPages, setNbPages] = useState();
   const params = new URLSearchParams(window.location.search);
   const currentPage = parseInt(params.get("page")) || 1;
@@ -29,7 +31,6 @@ export function ListPage() {
   };
 
   const [levelChoice, setLevelChoice] = React.useState("A1");
-  const [typeChoice, setTypeChoice] = React.useState("noun");
   const [inputSentenceCh, setInputSentenceCh] = React.useState("");
   const [inputSentenceEn, setInputSentenceEn] = React.useState("");
   const [disabled, setDisabled] = React.useState("");
@@ -100,6 +101,7 @@ export function ListPage() {
           const { totalItems, totalPages } = getPagingData(words, page, 100)
 
           setWords(words);
+          setInitialWords(words);
           setNbPages(totalPages);
           setNbWords(totalItems);
         }
@@ -153,35 +155,69 @@ export function ListPage() {
   }
 
   const nbSentences = words?.filter(
-    (word) => word.sentence_ch !== "" && word.sentence_en !== ""
+    (word) => word.sentence_ch !== null && word.sentence_en !== null
   );
 
   const currentLevelNbWords = words.filter(
     (word) => word.level === levelChoice
   );
 
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    const searchWords = initialWords.filter((word) => word.chinese.includes(value))
+    if(searchWords.length > 0){
+      setWords(searchWords);
+    }
+  };
+
+  useEffect(() => {
+    //retrieveWordsByLevel(levelChoice);
+    (async () => {
+      if (words.length === 0) {
+        const params = new URLSearchParams(window.location.search);
+        const page = parseInt(params.get("page")) || 1;
+        let value = { page: page };
+        //retrieveAllWords();
+        const proxyUrl = `/api/words?page=${page}`;
+        const response = await fetch(proxyUrl);
+        const words = await response.json()
+        console.log('words is :', words);
+        if(words?.length){
+          const { totalItems, totalPages } = getPagingData(words, page, 100)
+
+          setWords(words);
+          setNbPages(totalPages);
+          setNbWords(totalItems);
+        }
+      }
+    })();
+  }, [words]);
+
+  const handleChangeSearch = (e) => {
+    setValue(e.target.value);
+    console.log('handle change search is :', typeof e.target.value);
+    if(e.target.value === ''){
+      console.log('in if');
+      setWords(initialWords)
+    }
+  };
+
   return (
     <Router>
-      <div className="List">
+      <div className="py-8  bg-lightDark text-white text-center">
         <h1>Here is the current TOCFL Vocabulary List :</h1>
         <p>
-          There is {words ? words.length : "a certain number "}{" "}
-          {typeChoice === "All" ? "words" : typeChoice} for{" "}
-          {levelChoice === "All" ? "all levels" : `level ${levelChoice}`}
+          There are {words.length} words
         </p>
         <p>
           {nbSentences ? nbSentences.length : "A certain number"} of those{" "}
-          {words ? words.length : null} words have sentences
+          {words ? words.length : null} words have sentences{" "}(
           {nbSentences && words
             ? ((100 * nbSentences.length) / words.length).toFixed(2)
             : null}{" "}
-          %
+          %)
         </p>
-        <p>
-          There is {nbWords} words in total{" "}
-          {levelChoice && `for the level ${levelChoice}`}
-        </p>
-        <div className="flex flex-row">
+        <div className="flex flex-row items-center justify-center pb-8 text-lightDark">
           <div>
             <Select
               name="level"
@@ -195,15 +231,14 @@ export function ListPage() {
             />
           </div>
           <div className="flex flex-row space-x-4">
-            <form type="submit" onSubmit={(e) => console.log('')}>
+            <form type="submit" onSubmit={handleSearch}>
               <input
                 value={value}
-                onChange={(e) => setValue(e.target.value)}
+                onChange={(e) => handleChangeSearch(e)}
                 type="text"
                 className="border border-black"
               />
               <button
-                disabled={value === ""}
                 className={cx(
                   { "bg-grey": value === "", "bg-white": value !== "" },
                   "border border-black"
@@ -215,6 +250,16 @@ export function ListPage() {
             </form>
           </div>
         </div>
+        <ButtonBase variant="primary" href={mkHref("page", nextPage)}>
+          <Pagination
+            count={nbPages}
+            page={currentPage}
+            siblingCount={0}
+            defaultPage={0}
+            shape="rounded"
+            onChange={handleChange}
+          />
+        </ButtonBase>
         <Table className="w-full">
           <TableHeader>
             <TableRow className="bg-black border border-1 border-white cursor-pointer">
@@ -222,7 +267,6 @@ export function ListPage() {
               <TableCell color="light">Chinese</TableCell>
               <TableCell color="light">Pinyin</TableCell>
               <TableCell color="light">English</TableCell>
-              <TableCell color="light">Type</TableCell>
               <TableCell color="light">Level</TableCell>
               <TableCell color="light">Sentence (chinese)</TableCell>
               <TableCell color="light">Sentence (english)</TableCell>
@@ -239,7 +283,6 @@ export function ListPage() {
 
                   <TableCell color="light">{word.pinyin}</TableCell>
                   <TableCell color="light">{word.english}</TableCell>
-                  <TableCell color="light">{word.type} </TableCell>
                   <TableCell color="light">{word.level} </TableCell>
                   <TableCell color="light">
                     {word.sentence_ch === "" ? (
@@ -301,15 +344,6 @@ export function ListPage() {
             );
           })}
         </Table>
-        {/*<PaginationControlled nbPages={nbPages} currentPage={currentPage} />
-         <Pagination
-          currentPageNumber={currentPage}
-          itemNumberPerPage={100}
-          totalItemCount={totalItemCount}
-          pageParameterName="page"
-          pageRange={20}
-          
-        />*/}
         <ButtonBase variant="primary" href={mkHref("page", nextPage)}>
           <Pagination
             count={nbPages}
@@ -324,27 +358,6 @@ export function ListPage() {
     </Router>
   );
 }
-
-/*
-export default function PaginationControlled({ nbPages, currentPage }) {
-  const [page, setPage] = React.useState();
-  const handleChange = (event, value) => {
-    console.log(value);
-    setPage(value);
-  };
-
-  return (
-    <ButtonBase variant="primary" href={mkHref("page", page)}>
-      <Pagination
-        count={nbPages}
-        page={page}
-        shape="rounded"
-        onChange={handleChange}
-      />
-    </ButtonBase>
-  );
-}
-*/
 
 function mkHref(pageParameterName, pageNumber) {
   const params = new URLSearchParams(window.location.search);
