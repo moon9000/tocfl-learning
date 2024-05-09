@@ -3,9 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = "postgresql://postgres.xlajdtiovdgyehkixcon:Nn38ELQSppt3hAXH@aws-0-eu-west-2.pooler.supabase.com:5432/postgres?pgbouncer=true"
-  directUrl = "postgresql://postgres.xlajdtiovdgyehkixcon:Nn38ELQSppt3hAXH@aws-0-eu-west-2.pooler.supabase.com:5432/postgres"
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Animes {
