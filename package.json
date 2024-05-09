@@ -41,8 +41,7 @@
     "build": "prisma generate && craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "postinstall": "prisma generate",
-    "vercel-build": "prisma generate && prisma migrate deploy && craco build"
+    "postinstall": "prisma generate"
   },
   "eslintConfig": {
     "extends": [
