@@ -1,18 +1,27 @@
+import { Stack } from "@mui/material";
 import React from "react";
-import { BrowserRouter as Router } from "react-router-dom";
 
 export function HomePage() {
   return (
-    <Router>
-        <div className="flex flex-column text-center bg-lightDark">
-          <h3 className="text-white">
-            Welcome to TOCFL Learning
-          </h3>
-          <h4 className="text-white">
-            You will find here multiple tools to help you learning traditional
-            chinese and study for the TOCFL exam
-          </h4>
-        </div>
-    </Router>
+    <div className="flex flex-column h-72 bg-lightDark px-8">
+      <h4 className="py-8 text-white text-center">Welcome to TOCFL Learning</h4>
+      <h5 className="py-2 text-white">
+        The Test of Chinese as a Foreign Language (TOCFL) is a set of
+        standardized language proficiency tests developed for non-native
+        speakers of Chinese.
+      </h5>
+      <h5 className="text-white">
+        This website can help you in your studies by easily searching for
+        vocabulary that is requiered to know to pass the TOCFL exam, with
+        english meaning and sentences.
+      </h5>
+      <h5 className="text-white">
+        Currently not all vocabulary words have sentences (the coverage is about
+        35%), but more sentences will be added gradually.
+      </h5>
+      <h5 className="text-white">
+        You can access the TOCFL vocabulary list and official informations about the TOCFL exam using the menu.
+      </h5>
+    </div>
   );
 }
