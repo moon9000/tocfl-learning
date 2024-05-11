@@ -1,8 +1,9 @@
 import React from "react";
+import { Footer } from "../../components/Footer/Footer";
 
 export function HomePage() {
   return (
-    <div style={{height: '100%'}} class="flex align-center flex-column">
+    <div style={{height: '100%'}} className="flex align-center flex-column">
       <h4 className="py-8 text-white text-center">Welcome to TOCFL Learning</h4>
       <h5 className="py-2 text-white">
         The Test of Chinese as a Foreign Language (TOCFL) is a set of

@@ -10,8 +10,10 @@ function App() {
         <NavBar />
         <div className="Main">
           <Main />
+          <div className="Footer">
+            <Footer />
+          </div>
         </div>
-        <Footer />
       </div>
     </Router>
   );
