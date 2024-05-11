@@ -1,7 +1,6 @@
 import React from "react";
 import cx from "classnames";
 import PropTypes from "prop-types";
-import "./style.css";
 
 export function Typography(props) {
   const { tag: Tag, variant, children, className, color, ...rest } = props;

@@ -1,6 +1,5 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
-import "./style.css";
 
 export function ButtonBase(props) {
   const { value, as, type, variant, children, ...rest } = props;

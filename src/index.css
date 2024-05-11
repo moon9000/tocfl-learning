@@ -1,0 +1,34 @@
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #444444;
+}
+
+.App {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  background-color: #444444;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.Main {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  padding: 20px
+}
